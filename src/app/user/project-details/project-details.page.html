@@ -1,0 +1,39 @@
+<ion-header>
+  <ion-toolbar>
+      <ion-buttons slot="start">
+          <ion-back-button></ion-back-button>
+      </ion-buttons>
+      <ion-title>Detalles del Proyecto</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+    <ion-card class="project-details" *ngIf="project">
+        <ion-card-header>
+          <ion-card-title>{{ project.name }}</ion-card-title>
+          <ion-card-subtitle>{{ project.description }}</ion-card-subtitle>
+        </ion-card-header>
+      
+        <ion-card-content>
+            <p><strong>Lider:</strong></p>
+            <p><strong>Miembros del Proyecto:</strong></p>
+            <ion-list>
+                <ion-item *ngFor="let member of project.members">
+                    <ion-avatar slot="start">
+                      <ion-img src="https://i.pravatar.cc/300?u=b"></ion-img>
+                    </ion-avatar>
+                    <ion-label>
+                      <h2>{{ member.firstName }} {{ member.lastName }}</h2>
+                      <p>{{ member.email }}</p>
+                    </ion-label>
+                  </ion-item>
+            </ion-list>
+        </ion-card-content>
+      </ion-card>
+  <div >
+
+      <ion-button expand="full" (click)="openInviteModal()">Invitar Miembros</ion-button>
+
+  </div>
+</ion-content>
