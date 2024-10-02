@@ -87,6 +87,7 @@ export class AuthService {
     localStorage.removeItem(this.USER_KEY);   // Eliminar los detalles del usuario
   }
 
+  
   // Verificar si el usuario está autenticado (si hay un token almacenado)
   isAuthenticated(): boolean {
     return this.getToken() !== null;  // Si hay un token, el usuario está autenticado
