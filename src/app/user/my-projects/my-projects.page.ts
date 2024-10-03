@@ -61,16 +61,16 @@ export class MyProjectsPage implements OnInit {
         },
         {
           text: 'Eliminar',
-          // handler: () => {
-          //   this.projectService.deleteProject(projectId).subscribe(
-          //     () => {
-          //       this.loadUserProjects(); // Recargar los proyectos después de eliminar
-          //     },
-          //     (error) => {
-          //       console.error('Error deleting project:', error);
-          //     }
-          //   );
-          // },
+          handler: () => {
+            this.projectService.deleteProject(projectId).subscribe(
+              () => {
+                this.loadUserProjects(); // Recargar los proyectos después de eliminar
+              },
+              (error) => {
+                console.error('Error deleting project:', error);
+              }
+            );
+          },
         },
       ],
     });

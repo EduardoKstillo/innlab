@@ -38,6 +38,11 @@ export class ProjectService {
     return this.http.put(`${this.baseUrl}/${projectId}`, projectData, { headers });
   }
 
+  deleteProject(projectId: number): Observable<any> {
+    const headers = this.getAuthHeaders();
+    return this.http.delete(`${this.baseUrl}/${projectId}`, { headers });
+  }
+
   getProjectMembers(projectId: number): Observable<any> {
     const headers = this.getAuthHeaders();
     return this.http.get(`${this.baseUrl}/${projectId}/members`, { headers });

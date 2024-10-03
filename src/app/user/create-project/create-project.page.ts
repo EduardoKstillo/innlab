@@ -13,7 +13,6 @@ export class CreateProjectPage {
   project = {
     name: '',
     description: '',
-    status: 'pending', // Estado inicial del proyecto
   };
 
   constructor(
@@ -24,9 +23,16 @@ export class CreateProjectPage {
   ) {}
 
   async createProject() {
-    const userId = this.authService.getLoggedInUserId(); // Obtener el ID del usuario autenticado
+    const leaderId = this.authService.getLoggedInUserId(); // Obtener el ID del usuario autenticado
 
-    this.projectService.createProject({ ...this.project, userId }).subscribe(
+    // Project Object
+    const projectData = { 
+      name: this.project.name, 
+      description: this.project.description, 
+      leaderId 
+    };
+
+    this.projectService.createProject( projectData ).subscribe(
       async () => {
         const alert = await this.alertController.create({
           header: 'Éxito',
