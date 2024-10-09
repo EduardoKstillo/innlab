@@ -15,10 +15,10 @@
           <p>{{ project.description }}</p>
           <p>Status: {{ project.status }}</p>
         </ion-label>
-        <ion-button slot="end" color="danger" (click)="deleteProject(project.id, $event)">
+        <ion-button slot="end" color="danger" (click)="deleteProject(project.id, $event)" *ngIf="project?.leaderName === loggedInUserName">
           <ion-icon name="trash"></ion-icon>
         </ion-button>
-        <ion-button slot="end" color="warning" (click)="editProject(project.id)">
+        <ion-button slot="end" color="warning" (click)="editProject(project.id)" *ngIf="project?.leaderName === loggedInUserName">
           <ion-icon name="pencil"></ion-icon>
         </ion-button>
       </ion-item>

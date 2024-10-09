@@ -6,7 +6,7 @@ ion-toolbar {
   --background: #121212;
 }
 
-ion-button {
+btn-invite {
   margin-top: 20px;
   padding: 8px;
 }
@@ -20,7 +20,16 @@ ion-card-content {
   color: #a1a1a1;
 }
 
+hr {
+  background-color: #505050a4;
+}
+
 .project-details {
+  border-radius: 10px; /* Redondeo en los campos de entrada */
+  box-shadow: 0 1px 6px rgba(146, 146, 146, 0.363); /* Sombra en los campos */
+}
+
+.list-loan-request {
   border-radius: 10px; /* Redondeo en los campos de entrada */
   box-shadow: 0 1px 6px rgba(146, 146, 146, 0.363); /* Sombra en los campos */
 }

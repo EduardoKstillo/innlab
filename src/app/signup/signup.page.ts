@@ -28,7 +28,7 @@ export class SignupPage {
         ...this.user,
         role: ['user'] // Rol predeterminado
       };
-
+      console.log(userData);
       // Llamar al servicio de autenticación para registrar al usuario
       this.authService.signUp(userData).subscribe(response => {
         console.log('Registro exitoso', response);

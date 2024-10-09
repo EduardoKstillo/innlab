@@ -2,6 +2,8 @@ import { Component, Input } from '@angular/core';
 import { ModalController, AlertController } from '@ionic/angular';
 import { ProjectService } from '../../services/project.service';
 import { UserService } from '../../services/user.service';
+import { InvitationService } from '../../services/invitation.service'; 
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-invite-members',
@@ -14,13 +16,18 @@ export class InviteMembersPage {
   searchTerm: string = ''; // Término de búsqueda
   emailInput: string = ''; // Variable para almacenar el input del correo
   searchResults: any[] = []; // Resultados de la búsqueda
+  leaderId: number; //
 
   constructor(
     private modalController: ModalController,
     private projectService: ProjectService,
     private userService: UserService,
-    private alertController: AlertController
-  ) {}
+    private alertController: AlertController,
+    private invitationService: InvitationService,
+    private authService: AuthService
+  ) {
+    this.leaderId = this.authService.getLoggedInUserId() ?? 0;
+  }
 
   // Método para buscar usuarios por correo
   searchUsers() {
@@ -54,8 +61,8 @@ export class InviteMembersPage {
   }
 
   async sendInvitations() {
-    if (this.projectId && this.emails.length > 0) {
-      this.projectService.inviteMembers(this.projectId, this.emails).subscribe(
+    if (this.projectId && this.emails.length > 0) {     
+      this.invitationService.inviteMembers(this.projectId, this.emails, this.leaderId).subscribe(
         async () => {
           const alert = await this.alertController.create({
             header: 'Éxito',
@@ -72,8 +79,16 @@ export class InviteMembersPage {
             buttons: ['OK']
           });
           await alert.present();
+          console.error('Error al enviar invitaciones:', error); // Debugging error
         }
       );
+    } else {
+      const alert = await this.alertController.create({
+        header: 'Advertencia',
+        message: 'Debes seleccionar al menos un correo electrónico y un proyecto.',
+        buttons: ['OK']
+      });
+      await alert.present();
     }
   }
 

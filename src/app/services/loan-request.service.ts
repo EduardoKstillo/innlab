@@ -1,12 +1,15 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class LoanRequestService {
-  private baseUrl = 'http://localhost:8080/api/loan-requests';
+  private baseUrl = `${environment.apiUrl}/loan-requests`;
 
   constructor(private http: HttpClient) {}
 
@@ -20,7 +23,13 @@ export class LoanRequestService {
 
   createLoanRequest(loanRequestData: any): Observable<any> {
     const headers = this.getAuthHeaders();
-    return this.http.post(`${this.baseUrl}`, loanRequestData, { headers });
+    return this.http.post(`${this.baseUrl}`, loanRequestData, { headers })
+      .pipe(
+        catchError(error => {
+          console.error('Error creating loan request:', error);
+          return throwError(error);
+        })
+      );
   }
 
   getLoanRequests(): Observable<any> {
@@ -33,23 +42,38 @@ export class LoanRequestService {
     return this.http.get(`${this.baseUrl}/${loanRequestId}`, { headers });
   }
 
-  approveLoanRequest(loanRequestId: number): Observable<any> {
+  getLoanRequestsByStatus(status: string): Observable<any> {
     const headers = this.getAuthHeaders();
-    return this.http.patch(`${this.baseUrl}/${loanRequestId}/approve`, {}, { headers });
+    return this.http.get(`${this.baseUrl}/status/${status}`, { headers });
   }
 
-  rejectLoanRequest(loanRequestId: number): Observable<any> {
+  approveLoanRequest(loanRequestId: number, moderatorId: number): Observable<any> {
     const headers = this.getAuthHeaders();
-    return this.http.patch(`${this.baseUrl}/${loanRequestId}/reject`, {}, { headers });
+    return this.http.patch<void>(`${this.baseUrl}/${loanRequestId}/approve?moderatorId=${moderatorId}`, {}, { headers });
+  }
+
+  rejectLoanRequest(loanRequestId: number, moderatorId: number): Observable<any> {
+    const headers = this.getAuthHeaders();
+    return this.http.patch<void>(`${this.baseUrl}/${loanRequestId}/reject?moderatorId=${moderatorId}`, {}, { headers });
   }
 
   returnLoanRequest(loanRequestId: number): Observable<any> {
     const headers = this.getAuthHeaders();
-    return this.http.patch(`${this.baseUrl}/${loanRequestId}/return`, {}, { headers });
+    return this.http.patch<void>(`${this.baseUrl}/${loanRequestId}/return`, {}, { headers });
+  }
+
+  approveReturn(loanRequestId: number, moderatorId: number): Observable<any> {
+    const headers = this.getAuthHeaders();
+    return this.http.patch<void>(`${this.baseUrl}/${loanRequestId}/approve-return?moderatorId=${moderatorId}`, {}, { headers });
+  }
+
+  cancelLoanRequest(loanRequestId: number): Observable<any> {
+    const headers = this.getAuthHeaders();
+    return this.http.patch<string>(`${this.baseUrl}/${loanRequestId}/cancel`, {}, { headers });
   }
 
   getLoanRequestsByProject(projectId: number): Observable<any> {
     const headers = this.getAuthHeaders();
-    return this.http.get(`${this.baseUrl}/projects/${projectId}`, { headers });
+    return this.http.get(`${this.baseUrl}/project/${projectId}`, { headers });
   }
 }

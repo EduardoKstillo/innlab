@@ -2,12 +2,14 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
+
 
 @Injectable({
   providedIn: 'root',
 })
 export class UserService {
-  private apiUrl = 'http://localhost:8080/api/user'; // Cambia la URL según tu backend
+  private baseUrl = `${environment.apiUrl}/user`;
 
   constructor(private http: HttpClient) {}
 
@@ -22,7 +24,7 @@ export class UserService {
 
   // Obtener todos los usuarios
   getAllUsers(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/all`, { headers: this.getAuthHeaders() }).pipe(
+    return this.http.get(`${this.baseUrl}/all`, { headers: this.getAuthHeaders() }).pipe(
       catchError(this.handleError)
     );
   }
@@ -30,33 +32,33 @@ export class UserService {
   // Buscar usuarios por email
   searchUsersByEmail(email: string): Observable<any> {
     const headers = this.getAuthHeaders();
-    return this.http.get(`${this.apiUrl}/search?email=${email}`, { headers });
+    return this.http.get(`${this.baseUrl}/search?email=${email}`, { headers });
   }
 
   // Crear un nuevo usuario
   createUser(userData: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/create`, userData, { headers: this.getAuthHeaders() }).pipe(
+    return this.http.post(`${this.baseUrl}/create`, userData, { headers: this.getAuthHeaders() }).pipe(
       catchError(this.handleError)
     );
   }
 
   // Obtener un usuario por ID
   getUserById(id: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/${id}`, { headers: this.getAuthHeaders() }).pipe(
+    return this.http.get(`${this.baseUrl}/${id}`, { headers: this.getAuthHeaders() }).pipe(
       catchError(this.handleError)
     );
   }
 
   // Actualizar un usuario
   updateUser(id: number, userData: any): Observable<any> {
-    return this.http.put(`${this.apiUrl}/update/${id}`, userData, { headers: this.getAuthHeaders() }).pipe(
+    return this.http.put(`${this.baseUrl}/update/${id}`, userData, { headers: this.getAuthHeaders() }).pipe(
       catchError(this.handleError)
     );
   }
 
   // Eliminar un usuario
   deleteUser(id: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/delete/${id}`, { headers: this.getAuthHeaders() }).pipe(
+    return this.http.delete(`${this.baseUrl}/delete/${id}`, { headers: this.getAuthHeaders() }).pipe(
       catchError(this.handleError)
     );
   }

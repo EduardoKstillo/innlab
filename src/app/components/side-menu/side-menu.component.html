@@ -15,7 +15,11 @@
     </div>
 
     <div class="menu-options">
-      <div class="menu-item" routerLink="/users" routerDirection="root" (click)="closeMenu()">
+      <div class="menu-item" routerLink="/profile" routerDirection="root" (click)="closeMenu()">
+        <ion-icon name="accessibility-outline" slot="start"></ion-icon>
+        Perfil
+      </div>
+      <div class="menu-item" routerLink="/user-list" routerDirection="root" (click)="closeMenu()">
         <ion-icon name="people-outline" slot="start"></ion-icon>
         Usuarios
       </div>

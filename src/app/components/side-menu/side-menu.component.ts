@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
-import { MenuController } from '@ionic/angular';
+import { AlertController, MenuController } from '@ionic/angular';
 import { AuthService } from '../../services/auth.service';
 import { UserService } from '../../services/user.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-side-menu',
@@ -15,6 +16,8 @@ export class SideMenuComponent {
     private authService: AuthService,
     private menu: MenuController,
     private userService: UserService,
+    private router: Router,
+    private alertController: AlertController
   ) {}
 
   ngOnInit() {
@@ -45,8 +48,25 @@ export class SideMenuComponent {
     this.menu.close(); // Cierra el menú
   }
 
-  logout() {
-    this.authService.logout(); // Llama al servicio de autenticación para cerrar sesión
-    // Aquí puedes redirigir al usuario a la página de inicio de sesión si es necesario
+  async logout() {
+    const alert = await this.alertController.create({
+      header: 'Confirmar',
+      message: '¿Estás seguro de que deseas cerrar sesión?',
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+        },
+        {
+          text: 'Cerrar Sesión',
+          handler: () => {
+            this.authService.logout(); // Cierra sesión
+            this.router.navigate(['/login']); // Navegar a la página de inicio de sesión
+          },
+        },
+      ],
+    });
+
+    await alert.present();
   }
 }

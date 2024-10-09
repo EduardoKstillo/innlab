@@ -11,13 +11,16 @@ import { AlertController } from '@ionic/angular';
 })
 export class MyProjectsPage implements OnInit {
   projects: any[] = [];
+  loggedInUserName: string;
 
   constructor(
     private projectService: ProjectService,
     private authService: AuthService,
     private router: Router,
     private alertController: AlertController
-  ) {}
+  ) {
+    this.loggedInUserName = this.authService.getLoggedInUser() ?? '';
+  }
 
   ngOnInit() {
     this.loadUserProjects();

@@ -57,6 +57,12 @@ const routes: Routes = [
     // data: { expectedRoles: ['ROLE_MODERATOR', 'ROLE_ADMIN'] },
   },
   {
+    path: 'request-loan/:projectId', // create a new request
+    loadChildren: () => import('./request-loan/request-loan.module').then( m => m.RequestLoanPageModule),
+    // canActivate: [RoleGuard],
+    // data: { expectedRoles: ['ROLE_USER'] }
+  },
+  {
     path: 'moderator-loan-requests',
     loadChildren: () => import('./moderator/moderator-loan-requests/moderator-loan-requests.module').then( m => m.ModeratorLoanRequestsPageModule),
     // canActivate: [RoleGuard],
@@ -101,6 +107,26 @@ const routes: Routes = [
   {
     path: 'unauthorized',
     component: UnauthorizedComponent
+  },
+  {
+    path: 'request-loan',
+    loadChildren: () => import('./request-loan/request-loan.module').then( m => m.RequestLoanPageModule)
+  },
+  {
+    path: 'user-list',
+    loadChildren: () => import('./admin/user-list/user-list.module').then( m => m.UserListPageModule)
+  },
+  {
+    path: 'create-user',
+    loadChildren: () => import('./admin/create-user/create-user.module').then( m => m.CreateUserPageModule)
+  },
+  {
+    path: 'edit-user/:id',
+    loadChildren: () => import('./admin/edit-user/edit-user.module').then( m => m.EditUserPageModule)
+  },
+  {
+    path: 'notifications',
+    loadChildren: () => import('./notifications/notifications.module').then( m => m.NotificationsPageModule)
   }
 ];
 

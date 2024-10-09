@@ -1,75 +1,69 @@
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import {
   ActionPerformed,
   PushNotificationSchema,
   PushNotifications,
   Token,
 } from '@capacitor/push-notifications';
-//import { IntereactionService } from './interaction.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class NotificationsPushService {
+  private deviceToken: string | null = null;
 
-  //private interactionService: InteractionService = injectable(IntereactionService);
-
-  constructor() { }
+  constructor(private router: Router) { }
 
   init() {
     console.log('Initializing notifications');
     
-    // Request permission to use push notifications
-    // iOS will prompt user and return if they granted permission or not
-    // Android will just grant without prompting
     PushNotifications.requestPermissions().then(result => {
       if (result.receive === 'granted') {
-        // Register with Apple / Google to receive push via APNS/FCM
         PushNotifications.register();
-      } else {
-        // Show some error
-        //this.interactionService.presentAlert('Error', 'Debes habilitar las notificaciones');
       }
     });
     this.addListener();
   }
 
   private addListener() {
-
-    // On success, we should be able to receive notifications
     PushNotifications.addListener('registration',
       (token: Token) => {
-        alert('Push registration success, token: ' + token.value);
-
-        //this.interactionService.presentAlert('Importante', `Registro exitoso, el token es: ${token.value}`);
+        this.deviceToken = token.value; // Guarda el token
+        alert('Push registration success, token: ' + this.deviceToken);
       }
     );
 
-    // Some issue with our setup and push will not work
     PushNotifications.addListener('registrationError',
       (error: any) => {
         alert('Error on registration: ' + JSON.stringify(error));
-
-        // this.interactionService.presentAlert('Error', `Registro fallido`);
       }
     );
 
-    // Show us the notification payload if the app is open on our device
     PushNotifications.addListener('pushNotificationReceived',
       (notification: PushNotificationSchema) => {
         alert('Push received: ' + JSON.stringify(notification));
-
-        // this.interactionService.presentAlert('Notificación', `Tienes una notificación: ${JSON.stringify(notification)}`);
       }
     );
 
-    // Method called when tapping on a notification
     PushNotifications.addListener('pushNotificationActionPerformed',
       (notification: ActionPerformed) => {
-        alert('Push action performed: ' + JSON.stringify(notification));
+        const requestType = notification.notification.data.type; // Extraer el tipo de notificación
+        const requestId = notification.notification.data.requestId; // Extraer el ID de la solicitud
 
-        // this.interactionService.presentAlert('Notificación acción', `Has pulsado la notificación: ${JSON.stringify(notification)}`);
+        console.log('Request Type:', requestType); // Agrega este log
+
+        console.log('Request ID:', requestId); // Agrega este log
+    
+        if (requestType === 'new_loan_request' && requestId) {
+          this.router.navigate(['/loan-request-details', requestId]); // Redirigir solo para nuevas solicitudes
+        }
       }
     );
+  }
+
+  // Método para obtener el token del dispositivo
+  getDeviceToken(): string | null {
+    return this.deviceToken; // Retorna el token del dispositivo
   }
 }

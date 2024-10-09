@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:8080/api/auth';  // URL backend
+  private baseUrl = `${environment.apiUrl}/auth`;
   private TOKEN_KEY = 'auth-token';  // Nombre de la clave del token en el almacenamiento
   private USER_KEY = 'auth-user';  // Nombre de la clave del usuario en el almacenamiento
 
@@ -15,7 +16,7 @@ export class AuthService {
 
   // Método para iniciar sesión
   login(credentials: { email: string, password: string }): Observable<any> {
-    return this.http.post(`${this.apiUrl}/signin`, credentials).pipe(
+    return this.http.post(`${this.baseUrl}/signin`, credentials).pipe(
       map((response: any) => {
         if (response.accessToken) {
           this.saveToken(response.accessToken);  // Guardar el token JWT en localStorage
@@ -40,9 +41,20 @@ export class AuthService {
     password: string;
     role: string[];
   }): Observable<any> {
-    return this.http.post(`${this.apiUrl}/signup`, userData).pipe(
+    return this.http.post(`${this.baseUrl}/signup`, userData).pipe(
       catchError(error => {
         console.error('Signup error:', error);
+        return throwError(error);
+      })
+    );
+  }
+
+  // Metodo para registrar el dispositivo
+  registerDeviceToken(token: string): Observable<any> {
+    const userId = this.getLoggedInUserId(); // Obtener el ID del usuario autenticado
+    return this.http.post(`${this.baseUrl}/register-device`, { userId, token }).pipe(
+      catchError(error => {
+        console.error('Error al registrar el token del dispositivo:', error);
         return throwError(error);
       })
     );
@@ -83,10 +95,19 @@ export class AuthService {
 
   // Logout - Eliminar el token y los detalles del usuario del almacenamiento
   logout(): void {
-    localStorage.removeItem(this.TOKEN_KEY);  // Eliminar el token
-    localStorage.removeItem(this.USER_KEY);   // Eliminar los detalles del usuario
-  }
-
+    const userId = this.getLoggedInUserId(); // Obtener el ID del usuario
+    console.log("cerrar sesionj: ", userId)
+    if (userId) {
+        // Enviar solicitud para eliminar el token del dispositivo
+        this.http.post(`${this.baseUrl}/logout-device/${userId}`, {}).subscribe(() => {
+            console.log('Logout successful');
+            localStorage.removeItem(this.TOKEN_KEY);  // Eliminar el token
+            localStorage.removeItem(this.USER_KEY);   // Eliminar los detalles del usuario
+        }, error => {
+            console.error('Error during logout:', error);
+        });
+    }
+}
   
   // Verificar si el usuario está autenticado (si hay un token almacenado)
   isAuthenticated(): boolean {

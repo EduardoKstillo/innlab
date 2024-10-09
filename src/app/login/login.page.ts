@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
+import { NotificationsPushService } from '../services/notifications-push.service';
 
 @Component({
   selector: 'app-login',
@@ -17,7 +18,7 @@ export class LoginPage {
   passwordType: string = 'password';
   passwordIcon: string = 'eye-off'; // Icono para mostrar u ocultar la contraseña
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(private authService: AuthService, private router: Router, private notificationsService: NotificationsPushService) {}
 
   // Método para alternar la visibilidad de la contraseña
   togglePasswordVisibility() {
@@ -34,6 +35,16 @@ export class LoginPage {
     if (this.credentials.email && this.credentials.password) {
       this.authService.login(this.credentials).subscribe(response => {
         console.log('Login successful', response);
+        const deviceToken = this.notificationsService.getDeviceToken();
+
+        if (deviceToken ){
+          // Registra el token en el servidor
+          this.authService.registerDeviceToken(deviceToken).subscribe(
+            () => console.log('Token registered successfully'),
+            error => console.error('Error registering token', error)
+          );
+        }
+
         this.router.navigate(['/home']);
       }, error => {
         console.error('Login failed', error);

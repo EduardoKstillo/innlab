@@ -1,12 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class LaboratoryDeviceService {
-  private baseUrl = 'http://localhost:8080/api/laboratory-devices';
+  private baseUrl = `${environment.apiUrl}/laboratory-devices`;
 
   constructor(private http: HttpClient) {}
 
@@ -26,6 +28,14 @@ export class LaboratoryDeviceService {
   createDevice(deviceData: any): Observable<any> {
     const headers = this.getAuthHeaders();
     return this.http.post(`${this.baseUrl}`, deviceData, { headers });
+  }
+
+  searchDevicesByDescription(description: string): Observable<any> {
+    const headers = this.getAuthHeaders();
+    return this.http.get(`${this.baseUrl}/search`, {
+      headers,
+      params: { description }
+    });
   }
 
   updateDevice(deviceId: number, deviceData: any): Observable<any> {

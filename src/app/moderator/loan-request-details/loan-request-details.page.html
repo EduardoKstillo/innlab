@@ -37,6 +37,10 @@
         <ion-button expand="full" color="success" (click)="approveRequest()">Aprobar Solicitud</ion-button>
         <ion-button expand="full" color="danger" (click)="rejectRequest()">Rechazar Solicitud</ion-button>
       </div>
+      <div *ngIf="loanRequest.status === 'PENDING_RETURN'" class="button-group">
+        <ion-button expand="full" color="success" (click)="approveReturnRequest()">Aprobar Devolución</ion-button>
+        <ion-button expand="full" color="danger" (click)="rejectRequest()">Rechazar Devolución</ion-button>
+      </div>
     </ion-card-content>
   </ion-card>
 </ion-content>
